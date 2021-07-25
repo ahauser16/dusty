@@ -1,0 +1,4 @@
+{
+    "mongoURI":
+      "mongodb+srv://whereWoofUser:woof123@laylacluster.oxagu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+  }
