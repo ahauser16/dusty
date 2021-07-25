@@ -61,7 +61,7 @@ Helpful Links:
 In 2019, the WHATWG and W3C signed an agreement to collaborate on a single version of HTML going forward: [this document](https://html.spec.whatwg.org/#introduction).
 
 
-- Socket.io (not using in this project) is a popular websocket package because it utilizes longpolling and has built in protocols to deal with firewall and web-browser incompatibilities.  However, Socket.IO is NOT a WebSocket implementation. Although Socket.IO indeed uses WebSocket as a transport when possible, it adds additional metadata to each packet. That is why a WebSocket client will not be able to successfully connect to a Socket.IO server, and a Socket.IO client will not be able to connect to a plain WebSocket server either.
+- Socket.io is a popular websocket package because it utilizes longpolling and has built in protocols to deal with firewall and web-browser incompatibilities.  However, Socket.IO is NOT a WebSocket implementation. Although Socket.IO indeed uses WebSocket as a transport when possible, it adds additional metadata to each packet. That is why a WebSocket client will not be able to successfully connect to a Socket.IO server, and a Socket.IO client will not be able to connect to a plain WebSocket server either.
   - [Socket.io npm package](https://www.npmjs.com/package/socket.io)
   - [Socket.io Github Repo](https://github.com/socketio/socket.io)
   - [article about MERN folder structure for socket.io](https://itnext.io/using-socket-io-with-a-mern-stack-93f4245e86e7) and its [associated Github repo](https://github.com/keithweaver/MERN-boilerplate)

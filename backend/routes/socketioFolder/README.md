@@ -1,4 +1,4 @@
-## I nodejs S Y N T A X for the .on() method
+## I Socket.io S Y N T A X for the .on() method
 - emitter.on(eventName, listener)
 - eventName - data-type is a string and is the name of the event
 - listener - data-type is a function and a callback function
@@ -6,15 +6,34 @@
 - [doc src](https://nodejs.org/api/events.html#events_emitter_on_eventname_listener)
 ---
 
-## II nodejs S Y N T A X for the .emit() method
+## II Socket.io S Y N T A X for the .emit() method
 - emitter.emit(eventName[, ...args])
 - eventName - data-type is a string (or a symbol) and is the name of the event
 - ...args - data-type can be anything
 - .emit() returns a boolean value
 - [doc src](https://nodejs.org/api/events.html#events_emitter_emit_eventname_args)
 ---
+## IIIA - Socket.io S Y N T A X for [io()](https://socket.io/docs/v4/client-api/) which is exposed as the io namespace in the standalone build or the result of calling:
+~~~
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io("http://localhost");
+</script>
+~~~
+or
+~~~
+const io = require("socket.io-client");
+// or with import syntax
+import { io } from "socket.io-client";
+~~~
+### io([url][, options])
+- url (String) (defaults to window.location)
+- options (Object)
+  - forceNew (Boolean) whether to reuse an existing connection
+- io() returns Socket
 
-## III nodejs S Y N T A X for using ES6 Arrow Functions as listeners
+---
+## IIIB - Conceptual Aside - nodejs S Y N T A X for using ES6 Arrow Functions as listeners
 ### It is possible to use ES6 Arrow Functions as listeners, however, when doing so, the this keyword will no longer reference the EventEmitter instance:
 ~~~
 const myEmitter = new MyEmitter();
@@ -132,9 +151,7 @@ io.on('connection',(socket)=>{
 </script>
 ~~~
 ---
-## VI [Socket.io documentation](https://socket.io/)
-### Key Notes:
-#### The [Server](https://socket.io/docs/v4/server-api/) constructor function is exposed by require("socket.io")
+## VI The [Server](https://socket.io/docs/v4/server-api/) constructor function is exposed by require("socket.io")
 - new Server(httpServer[, options])
   - httpServer (http.Server) the server to bind to.
   - options (Object)
@@ -155,4 +172,80 @@ const io = new socketio(expressServer,{
   path: '/socket.io', //default value so not necessary
   serveClient: true   //default value so not necessary
 });
+~~~
+### The ['connect' event also synonymous with 'connection'](https://socket.io/docs/v4/server-api/#Namespace) is fired upon a connection from the client to a namespace.
+- Event: connection
+  - socket (Socket) socket connection with client
+- Fired upon a connection from client.
+~~~
+io.on("connection", (socket) => {
+  // ...
+});
+~~~
+- the socket callback function above refers to the connection with the client.
+---
+## VII The [Socket class](https://socket.io/docs/v4/server-api/#Socket) is the fundamental class for interacting with browser clients. A Socket belongs to a certain Namespace (by default /) and uses an underlying Client to communicate.
+
+It should be noted the Socket doesn’t relate directly to the actual underlying TCP/IP socket and it is only the name of the class.
+
+Within each Namespace, you can also define arbitrary channels (called room) that the Socket can join and leave. That provides a convenient way to broadcast to a group of Sockets (see Socket#to below).
+
+The Socket class inherits from the NodeJS [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). The Socket class overrides the emit method, and does not modify any other EventEmitter method. All methods documented here which also appear as EventEmitter methods (apart from emit) are implemented by EventEmitter, and documentation for EventEmitter applies.
+
+## VIII [Namespaces](https://socket.io/docs/v4/server-api/#Namespace) represents a pool of sockets connected under a given scope identified by a pathname e.g.:  /chat
+### namespace. name
+- Data-type is a string which is the namespace identifier property.
+### namespace.sockets
+- Data-type is a (Map<SocketId, Socket>) which is a map of Socket instances that are connected to this namespace.
+~~~
+// number of sockets in this namespace (on this node)
+const socketCount = io.of("/admin").sockets.size;
+~~~
+### note bene that Namespaces are NOT supported by normal websockets; Namespaces are exlusive to Socket.io.
+
+### In general, as part of a Socket.io server Namespaces contain Rooms in the same way that as part of a Mongo DB server there are databases which contain data tables.
+---
+## IX [server.of(nsp)](https://socket.io/docs/v4/server-api/#server-of-nsp) initializes and retrieves the given Namespace by its pathname identifier nsp. If the namespace was already initialized it returns it immediately.
+- nsp (String|RegExp|Function)
+- Returns Namespace
+~~~
+const adminNamespace = io.of("/admin");
+~~~
+- A regex or a function can also be provided, in order to create namespace in a dynamic way:
+~~~
+const dynamicNsp = io.of(/^\/dynamic-\d+$/).on("connection", (socket) => {
+  const newNamespace = socket.nsp; // newNamespace.name === "/dynamic-101"
+
+  // broadcast to all clients in the given sub-namespace
+  newNamespace.emit("hello");
+});
+
+// client-side
+const socket = io("/dynamic-101");
+
+// broadcast to all clients in each sub-namespace
+dynamicNsp.emit("hello");
+
+// use a middleware for each sub-namespace
+dynamicNsp.use((socket, next) => { /* ... */ });
+~~~
+With a function:
+~~~
+io.of((name, query, next) => {
+  // the checkToken method must return a boolean, indicating whether the client is able to connect or not.
+  next(null, checkToken(query.token));
+}).on("connection", (socket) => { /* ... */ });
+~~~
+---
+## X - [namespace.emit(eventName[, …args])](https://socket.io/docs/v4/server-api/#namespace-emit-eventName-%E2%80%A6args) emits an event to all connected clients.
+- eventName (String)
+- args
+- Returns true
+### The following two are equivalent:
+~~~
+const io = require("socket.io")();
+io.emit("an event sent to all connected clients"); // main namespace
+
+const chat = io.of("/chat");
+chat.emit("an event sent to all connected clients in chat namespace");
 ~~~
