@@ -67,9 +67,9 @@ In 2019, the WHATWG and W3C signed an agreement to collaborate on a single versi
   - [article about MERN folder structure for socket.io](https://itnext.io/using-socket-io-with-a-mern-stack-93f4245e86e7) and its [associated Github repo](https://github.com/keithweaver/MERN-boilerplate)
   - [another article about MERN folder structure for socket.io](https://medium.com/@gil.palikaras/build-a-chat-web-app-with-mern-stack-and-socket-io-8f33d151c62c#id_token=eyJhbGciOiJSUzI1NiIsImtpZCI6IjFiZjhhODRkM2VjZDc3ZTlmMmFkNWYwNmZmZDI2MDcwMWRkMDZkOTAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2MjYyMDQwNDgsImF1ZCI6IjIxNjI5NjAzNTgzNC1rMWs2cWUwNjBzMnRwMmEyamFtNGxqZGNtczAwc3R0Zy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwNzU0Mzg4NzY0MTQyNTI2MjQxOSIsImVtYWlsIjoiYXJ0aHVyLmhhdXNlckBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXpwIjoiMjE2Mjk2MDM1ODM0LWsxazZxZTA2MHMydHAyYTJqYW00bGpkY21zMDBzdHRnLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwibmFtZSI6IkFydGh1ciBIYXVzZXIiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2lVb0h1eDVmQUoxcWNDLXpNLVVYdTktSGZlNXBSWUJ1SmQ0MGw3MWc9czk2LWMiLCJnaXZlbl9uYW1lIjoiQXJ0aHVyIiwiZmFtaWx5X25hbWUiOiJIYXVzZXIiLCJpYXQiOjE2MjYyMDQzNDgsImV4cCI6MTYyNjIwNzk0OCwianRpIjoiMTJjY2NlMTU4YjUzNGMwNzgxNGE2NjAxODk0NjNjZTk1ZTI1MjNkZSJ9.tnZOQ1nk6k09oF8fNGhIY9hqPqr5v3UfPhD6bEN-UUNw3xmtIKOCnyuCWiYMO715pR5_jw0Wk_B9BGMjAagZXqpu7lPODkp1ka26hiVK_rm7UML6tXatdq3n9QW-03OvYohD80DA3jUBZSS87AH39bXaRVmHxushVj7vrQI1TqgBYV4pmuBUnB4ZePDXpJ7QtgJg8pxgda1TPxZg2NPAueU5qxReFvPY5hHz5evsQr1TNF8BCk0K51rm1NTZIGS9160fp20cGOM1bMfK4zfWV2a9ni6pnCEJhCZJPsXXJUZAhgEeYYxInE_toLIhzx07D1GcFcWtjzBk3OnH87JuDA)
     - websocket client-server model
-![websocket client/server model](.\ReadMeAssets\web-socket-client-server-model.png)
+![websocket client/server model](./ReadMeAssets/web-socket-client-server-model.png)
     - socket.io client-server model
-![socket.io client-server model](ReadMeAssets\socketio-client-server-model.png)
+![socket.io client-server model](./ReadMeAssets/socketio-client-server-model.png)
 
 ---
 

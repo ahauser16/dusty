@@ -249,3 +249,6 @@ io.emit("an event sent to all connected clients"); // main namespace
 const chat = io.of("/chat");
 chat.emit("an event sent to all connected clients in chat namespace");
 ~~~
+---
+## XI Namespace Cheatsheet
+![Cheatsheet](./readmeAssets/cheatsheet.png)
