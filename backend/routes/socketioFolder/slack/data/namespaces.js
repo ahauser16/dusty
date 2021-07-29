@@ -9,10 +9,9 @@ let wikiNs = new Namespace(0,'Wiki','https://upload.wikimedia.org/wikipedia/en/t
 let mozNs = new Namespace(1,'Mozilla','https://www.mozilla.org/media/img/logos/firefox/logo-quantum.9c5e96634f92.png','/mozilla');
 let linuxNs = new Namespace(2,'Linux','https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png','/linux');
 
-
 // Make the main room and add it to rooms. it will ALWAYS be 0
 //   SYNTAX for new Room(roomId, roomTitle, namespace)
-wikiNs.addRoom(new Room(0,'New Articles','Wiki'));
+wikiNs.addRoom(new Room(0,'New Articles','Wiki', true));
 wikiNs.addRoom(new Room(1,'Editors','Wiki'));
 wikiNs.addRoom(new Room(2,'Other','Wiki'));
 
