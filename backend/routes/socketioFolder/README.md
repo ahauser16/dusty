@@ -252,3 +252,10 @@ chat.emit("an event sent to all connected clients in chat namespace");
 ---
 ## XI Namespace Cheatsheet
 ![Cheatsheet](./readmeAssets/cheatsheet.png)
+
+## XII [namespace.clients(callback)-->CAREFUL! This syntax no longer exists in the docs!](https://socket.io/docs/v4/server-api/#socket-client)
+
+## XIII [socket.io documentation re: migrating from v2 to v3](https://socket.io/docs/v3/migrating-from-2-x-to-3-0/#Namespace-connected-is-renamed-to-Namespace-sockets-and-is-now-a-Map)
+
+![io.clients - v2 (before)](./readmeAssets/socketio-doc-regarding-io_clients(before).png)
+![io.clients - v3 (after)](./readmeAssets/socketio-doc-regarding-io_clients(after).png)
