@@ -1,4 +1,13 @@
 function joinNs(endpoint) {
+
+if(nsSocket){
+    //check to see if nsSocket is actually a socket
+    nsSocket.close();
+
+    //remove the eventListener before it's added again.
+    document.querySelector('#user-input').removeEventListener('submit')
+}
+
   nsSocket = io(`http://localhost:9000${endpoint}`);
   nsSocket.on("nsRoomLoad", (nsRooms) => {
     let roomList = document.querySelector(".room-list");
@@ -31,8 +40,8 @@ function joinNs(endpoint) {
 
 
   nsSocket.on("messageToClients", (msg) => {
-    // const newMsg = buildHTML(msg);
-    document.querySelector("#messages").innerHTML += `<li>${msg.text}</li>`;
+    const newMsg = buildHTML(msg);
+    document.querySelector("#messages").innerHTML += newMsg
   });
 
   document
@@ -44,18 +53,18 @@ function joinNs(endpoint) {
     });
 }
 
-// function buildHTML(msg) {
-//   const convertedDate = new Date(msg.time).toLocaleString();
-//   const newHTML = `
-//     <li>
-//           <div class="user-image">
-//             <img src="${msg.avatar}" />
-//           </div>
-//           <div class="user-message">
-//             <div class="user-name-time">${msg.username} <span>${convertedDate}</span></div>
-//             <div class="message-text">${msg.text}</div>
-//           </div>
-//         </li>
-//         `;
-//   return newHTML;
-// }
+function buildHTML(msg) {
+  const convertedDate = new Date(msg.time).toLocaleString();
+  const newHTML = `
+    <li>
+          <div class="user-image">
+            <img src="${msg.avatar}" />
+          </div>
+          <div class="user-message">
+            <div class="user-name-time">${msg.username} <span>${convertedDate}</span></div>
+            <div class="message-text">${msg.text}</div>
+          </div>
+        </li>
+        `;
+  return newHTML;
+}

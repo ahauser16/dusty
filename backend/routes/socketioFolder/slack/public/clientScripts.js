@@ -16,10 +16,17 @@ socket.on("nsList", (nsData) => {
   Array.from(document.getElementsByClassName("namespace")).forEach((elem) => {
     elem.addEventListener("click", (e) => {
       const nsEndpoint = elem.getAttribute("ns");
-      console.log(`${nsEndpoint} I should go to now`);
+      // console.log(`${nsEndpoint} I should go to now`);
+
+      //this event below happens when the user clicks on it
+      //CURRENT BUG TO FIX IS THE LINE OF CODE BELOW...
+      //WE GET THE ERROR BELOW:
+      //C:\Users\arthu\development\projectWhereWoof\dustyv3\backend\routes\socketioFolder\slack\slack.js:50
+      //       nsSocket.emit("historyCatchUp", nsRoom.history);
+      // TypeError: Cannot read property 'history' of undefined
+      // joinNs(nsEndpoint);
     });
   });
-
+  //this event below happens automatically
   joinNs("/wiki");
-
 });
