@@ -1,4 +1,10 @@
-const socket = io("http://localhost:9000"); //by default this is the / namespace also referred to as a socketio endpoint
+const username = prompt("What is your username?")
+// const socket = io("http://localhost:9000"); //by default this is the / namespace also referred to as a socketio endpoint
+const socket = io("http://localhost:9000", {
+  query: {
+    username
+  }
+}); 
 let nsSocket = "";
 
 //util: while we are listening for the nsList event and then triggers...
