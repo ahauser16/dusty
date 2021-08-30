@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>Leaflet with Geolocation</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+    ></script>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        var map, deviceCoords;
+        let data = {};
+
+        navigator.geolocation.getCurrentPosition(leafletInit);
+
+        function leafletInit(location) {
+          let coords = [location.coords.latitude, location.coords.longitude];
+          deviceCoords = {
+            lat: coords[0],
+            lng: coords[1],
+          };
+
+          map = L.map("map").setView(coords, 20);
+
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:
+              "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+          }).addTo(map);
+
+          L.marker(coords, {
+            draggable: true,
+          })
+            .addTo(map)
+            .bindPopup("You are here.")
+            .openPopup();
+
+          map.on("click", handleMapClick);
+
+          var polyLatLng = [
+            [40.6483157658295, -73.9673406648669],
+            [40.64698075857149, -73.959615902904],
+            [40.64349658944744, -73.96605320453975],
+            [40.64525497790757, -73.97043056965205],
+            [40.64577597299918, -73.96721191883418],
+          ];
+
+          var polygon = L.polygon([
+            polyLatLng,
+            { color: "#FFF", fillColor: "#000", weight: 0.5, fillOpacity: 0.5 },
+          ])
+            .addTo(map)
+            .bindPopup(
+              "I am a polygon shape that was made using the L.polygon() method."
+            );
+
+          var geojsonLngLat = {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Point",
+                  coordinates: [-73.96970272064209, 40.64717331711213],
+                },
+              },
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [
+                    [
+                      [-73.97815704345703, 40.647661736090356],
+                      [-73.98665428161621, 40.6430053297684],
+                      [-73.97948741912842, 40.63939069251606],
+                      [-73.97562503814697, 40.6444055420497],
+                      [-73.98043155670166, 40.643689158040715],
+                      [-73.97815704345703, 40.647661736090356],
+                    ],
+                  ],
+                },
+              },
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Point",
+                  coordinates: [-73.97493839263916, 40.640497899496765],
+                },
+              },
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [
+                    [
+                      [-73.98425102233887, 40.64981073712853],
+                      [-73.97674083709715, 40.64981073712853],
+                      [-73.97674083709715, 40.65261084676396],
+                      [-73.98425102233887, 40.65261084676396],
+                      [-73.98425102233887, 40.64981073712853],
+                    ],
+                  ],
+                },
+              },
+            ],
+          };
+
+          L.geoJSON(geojsonLngLat).addTo(map);
+
+          function getDogRunData() {
+            //the fetch method does not return any data but it does return a response promise which is in a pending state.  This will be the first promise in our "promise chain".
+            const fetchData = fetch(
+              "https://data.cityofnewyork.us/resource/wswf-9pts.json"
+            );
+
+            //target the dogparks element
+            const dogparks = document.getElementById("dogparks");
+
+            // In order to extract the data from the response-promise object we will use the .then() method to attach a callback that will run once the promise is fulfilled.
+            fetchData
+              .then((response) => {
+                // console.log(response);
+                //at this point we know our API response is working and now we need to get the body of the response.  We do so by calling the json() method on the response to get the response body in json format.  This operation is asynchronous and the json() method RETURNS a promise.  We will need to create a promise chain.
+                return response.json();
+              })
+              .then((response) => {
+                data.dogRunData = response.map((elem) => ({
+                  name: elem.name,
+                  borough: elem.borough,
+                  closureType: elem.closuretype,
+                  propertyName: elem.propertyname,
+                  parksPropertyId: elem.gispropnum,
+                  status: elem.status,
+                  polygon: elem.polygon,
+                  bounds: getBounds(elem.polygon.coordinates[0]),
+                }));
+                console.log(data);
+                dogparksMain.innerHTML = populateSideBar(data.dogRunData);
+                document
+                  .querySelector("aside select")
+                  .addEventListener("change", (e) => {
+                    const filterBy = {};
+                    if (e.target.value !== "all")
+                      filterBy.borough = e.target.value;
+                    dogparksMain.innerHTML = populateSideBar(
+                      data.dogRunData,
+                      filterBy
+                    );
+                  });
+              });
+          }
+          getDogRunData();
+        }
+
+        function populateSideBar(response, filterBy) {
+          const filterResponse = response.filter((elem) => {
+            if (!filterBy) return true;
+            for (const [key, value] of Object.entries(filterBy)) {
+              if (elem[key] !== value) return false;
+            }
+            return true;
+          });
+          const dogParkNames = filterResponse
+            .map((elem) => `<li>${elem.name}</li>`)
+            .join("\n");
+          return `<ul>${dogParkNames}</ul>`;
+        }
+        //see international dateline and prime meridean for alternate logic if want to use outside USA
+        function getBounds(polyCoords) {
+          const lats = polyCoords.map((c) => c[1]);
+          const lngs = polyCoords.map((c) => c[0]);
+          const minlat = Math.min(...lats);
+          const minlng = Math.min(...lngs);
+          const maxlat = Math.max(...lats);
+          const maxlng = Math.max(...lngs);
+          return [
+            [minlat, minlng],
+            [maxlat, maxlng],
+          ];
+        }
+
+        // filter by borough, name, closuretype,;aljsd;flasjd
+
+        function handleMapClick(e) {
+          // if (theMarker != undefined) {
+          //     theMarker.remove();
+          //     console.log("marker");
+          // };
+
+          getRoute(deviceCoords, e.latlng);
+        }
+
+        function getRoute(departureLatLng, arrivalLatLng) {
+          const apiKey = "60cf6646c39e45a0de83a59baa00a57d";
+          const appid = "dfc45614";
+          const headers = new Headers({
+            Host: "api.traveltimeapp.com",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "X-Application-Id": appid,
+            "X-Api-Key": apiKey,
+          });
+          const data = {
+            locations: [
+              {
+                id: "departure",
+                coords: {
+                  lat: departureLatLng.lat,
+                  lng: departureLatLng.lng,
+                },
+              },
+              {
+                id: "arrival",
+                coords: {
+                  lat: arrivalLatLng.lat,
+                  lng: arrivalLatLng.lng,
+                },
+              },
+            ],
+
+            departure_searches: [
+              {
+                id: "facewoof",
+                departure_location_id: "departure",
+                arrival_location_ids: ["arrival"],
+                transportation: { type: "walking" },
+                departure_time: getDateString(),
+                properties: ["travel_time", "distance", "route"],
+              },
+            ],
+          };
+          fetch("https://api.traveltimeapp.com/v4/routes", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then(drawRoute)
+            .catch(console.error);
+        }
+
+        function drawRoute(serverJson) {
+          //   console.log(serverJson);
+
+          let properties = serverJson.results[0].locations[0].properties[0],
+            travelTime = properties.travel_time,
+            distance = properties.distance,
+            arrivalTime = properties.route.arrival_time,
+            departureTime = properties.route.departure_time,
+            instructionsArray = properties.route.parts.map(
+              (route) => route.directions
+            ),
+            distanceArray = properties.route.parts.map(
+              (route) => route.distance
+            ),
+            travelTimeArray = properties.route.parts.map(
+              (route) => route.travel_time
+            ),
+            directionArray = properties.route.parts.map(
+              (route) => route.direction
+            ),
+            routeArray = properties.route.parts
+              .map((route) => route.coords)
+              .flat()
+              .map((routeObj) => Object.values(routeObj)),
+            directions = (polyline = L.polyline(routeArray, {
+              color: "red",
+            }).addTo(map));
+          map.fitBounds(polyline.getBounds());
+
+          theMarker = L.marker(routeArray[routeArray.length - 1]).addTo(map);
+
+          L.marker(routeArray[routeArray.length - 1])
+            .addTo(map)
+            .bindPopup(`Travel Time: ${travelTime}<br>Distance: ${distance}`)
+            .openPopup();
+
+          console.log(properties.route.parts[x].directions);
+        }
+
+        function getDateString() {
+          let d = new Date();
+          return d.toISOString();
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <main>
+      <div id="map"></div>
+    </main>
+
+    <aside>
+      <select>
+        <option value="all">Show All</option>
+        <option value="M">Manhattan</option>
+        <option value="X">Bronx</option>
+        <option value="B">Brooklyn</option>
+        <option value="Q">Queens</option>
+        <option value="R">Staten Island</option>
+      </select>
+      <div id="dogparksMain"></div>
+    </aside>
+  </body>
+</html>
