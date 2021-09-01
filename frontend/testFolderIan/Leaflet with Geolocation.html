@@ -120,7 +120,98 @@
             ],
           };
 
-          L.geoJSON(geojsonLngLat).addTo(map);
+          var featureClassStyle = {
+            color: "red",
+            weight: 5,
+            opacity: 0.65,
+          };
+
+          L.geoJSON(geojsonLngLat, {
+            style: featureClassStyle,
+          })
+            .addTo(map)
+            .bindPopup(
+              "I am a feature class type geojson object that was made using the L.geoJSON() method."
+            );
+
+          var geojsonPolygonLatLng = {
+            coordinates: [
+              [
+                [-73.9663553237915, 40.67406360070414],
+                [-73.98334980010986, 40.665470306148734],
+                [-73.97614002227783, 40.65671312078148],
+                [-73.95867347717285, 40.66149878833944],
+                [-73.9579439163208, 40.66892077716713],
+                [-73.9663553237915, 40.67406360070414],
+              ],
+            ],
+            type: "Polygon",
+          };
+
+          var polyStyle = {
+            color: "#ff7800",
+            weight: 5,
+            opacity: 0.65,
+          };
+
+          L.geoJSON(geojsonPolygonLatLng, {
+            style: polyStyle,
+          })
+            .addTo(map)
+            .bindPopup(
+              "I am a polygon type, geojson object that was made using the L.geoJSON() method."
+            );
+
+          // .map test
+          var poly1 = {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-73.9912462234497, 40.67722070725255],
+                [-73.98704051971436, 40.67569099388361],
+                [-73.99536609649658, 40.67263146184729],
+                [-73.98759841918945, 40.67058084583907],
+                [-73.98004531860352, 40.67689523926252],
+                [-73.98528099060057, 40.68242797899421],
+                [-73.9912462234497, 40.67722070725255],
+              ],
+            ],
+          };
+
+          var poly2 = {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-73.97193431854248, 40.68304631549296],
+                [-73.96026134490967, 40.68151673580367],
+                [-73.97043228149414, 40.67461691884209],
+                [-73.9535665512085, 40.67943384744568],
+                [-73.94880294799805, 40.68548706144939],
+                [-73.96180629730225, 40.69140956667794],
+                [-73.97193431854248, 40.68304631549296],
+              ],
+            ],
+          };
+
+          var poly3 = {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-73.95283699035645, 40.67178518351826],
+                [-73.93554210662842, 40.668627819582106],
+                [-73.93940448760986, 40.67933621045698],
+                [-73.95283699035645, 40.67178518351826],
+              ],
+            ],
+          };
+
+          var polyArray = [poly1, poly2, poly3];
+
+          L.geoJSON(polyArray)
+            .addTo(map)
+            .bindPopup(
+              "I am one of three polygon-type, geoJSON objects in an array created using the L.geoJSON() method."
+            );
 
           function getDogRunData() {
             //the fetch method does not return any data but it does return a response promise which is in a pending state.  This will be the first promise in our "promise chain".
@@ -151,6 +242,7 @@
                 }));
                 console.log(data);
                 dogparksMain.innerHTML = populateSideBar(data.dogRunData);
+
                 document
                   .querySelector("aside select")
                   .addEventListener("change", (e) => {
@@ -162,10 +254,38 @@
                       filterBy
                     );
                   });
+                
+                  // all dog runs are rendered here.====================
+                var dogRunStyle = {
+                  color: "#f604ea",
+                  fillColor: "#f604ea",
+                  fill: true,
+                  fillOpacity: 1.0,
+                  weight: 5,
+                  opacity: 0.65,
+                };
+
+                function onEachFeature(feature, layer){
+                    //does this feature have a property named "name"?
+                    if (feature.name) {
+                      layer.bindPopup(feature.name);
+                    }
+                }
+
+                const dogRunPolygons = response.map((elem) => elem.polygon);
+                console.log(dogRunPolygons);
+                L.geoJSON(dogRunPolygons, {style:dogRunStyle, onEachFeature: onEachFeature}).addTo(map);
+                // all dog runs are rendered here.====================
+
+
               });
           }
           getDogRunData();
         }
+
+
+
+
 
         function populateSideBar(response, filterBy) {
           const filterResponse = response.filter((elem) => {
@@ -180,6 +300,7 @@
             .join("\n");
           return `<ul>${dogParkNames}</ul>`;
         }
+
         //see international dateline and prime meridean for alternate logic if want to use outside USA
         function getBounds(polyCoords) {
           const lats = polyCoords.map((c) => c[1]);
@@ -194,7 +315,27 @@
           ];
         }
 
-        // filter by borough, name, closuretype,;aljsd;flasjd
+        //Sets a map view that contains the given geographical bounds with the maximum zoom level possible.
+        // SYNTAX: fitBounds(<LatLngBounds> bounds, <fitBounds options> options?)
+          function fitDogRunBounds(){
+            getBounds(polyCoords);
+          }
+
+
+        //SYNTAX: flyToBounds(<LatLngBounds> bounds, <fitBounds options> options?)
+        //Sets the view of the map with a smooth animation like flyTo, but takes a bounds parameter like fitBounds.
+
+
+
+
+        //
+        //desired outcome:
+        //user clicks on a dog park name in dropdown.
+        //getBounds function runs and returns the bounds of the polygon.
+        //the map pans to the dog park with the whole polygon within view.
+        //
+
+
 
         function handleMapClick(e) {
           // if (theMarker != undefined) {
